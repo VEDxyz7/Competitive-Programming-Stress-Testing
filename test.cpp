@@ -1,90 +1,146 @@
-#include<bits/stdc++.h>
+##include<bits/stdc++.h>
 using namespace std;
+#define ll long long
 
-mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+ll bin_exp(ll a, ll b) {
+    long long res = 1;
+    ll mod=998244353;
+    while (b > 0) {
+        if (b & 1)
+            res = ((res%mod)*(a%mod))%mod;
+        a = ((a%mod)*(a%mod))%mod;
+        b/=2;
+    }
+    return res;
+}
 
-int rand(int l, int r){
-    uniform_int_distribution<int> uid(l, r);
-    return uid(rng);
-}
-// Random n numbers between l and r
-void num(int l, int r, int n) {
-    for (int i = 0; i < n; ++i)
-    {
-        cout << rand(l,r) << " ";
+ll hcf(ll a, ll b) {
+    while (b) {
+        a %= b;
+        swap(a, b);
     }
+    return a;
 }
- 
-//Random n real numbers between l and r with dig decimal places
-void real(int l, int r, int dig, int n) {
-    for (int i = 0; i < n; ++i)
-    {
-        cout << rand(l,r) <<"."<<rand(0,pow(10,dig)-1)<< " ";
-    }
-}
-// Random n strings of length l
-void str(int l, int n) {
-    for (int i = 0; i < n; ++i)
-    {
-        for(int j = 0; j < l; ++j) {
-            int v = rand(1,150);
-            if(v%3==0) cout<<(char)rand('a','z');
-            else if(v%3==1) cout<<(char)rand('A','Z');
-            else cout<<rand(0,9);
+
+bool is_prime(ll n){
+    bool flag=true;
+    for(int i=2;i*i<=n;i++){
+        if(n%i==0){
+            flag=false;
+            break;
         }
-        cout<<" ";
     }
+    return flag;
 }
-// Random n strings of max length l
-void strmx(int mxlen, int n) {
-    for (int i = 0; i < n; ++i)
-    {
-        int l = rand(1,mxlen);
-        for(int j = 0; j < l; ++j) {
-            int v = rand(1,150);
-            if(3%3==0) cout<<(char)rand('a','z');
-            else if(v%3==1) cout<<(char)rand('A','Z');
-            else cout<<rand(0,9);
-        }
-        cout<<" ";
-    }
-} 
-// Random tree of n nodes
-void tree(int n) {
-    int prufer[n-2];
-    for ( int i = 0; i < n; i++ ){
-        prufer[i] = rand(1,n);
-    }
-    int m = n-2;
-    int vertices = m + 2; 
-    int vertex_set[vertices]; 
-    for (int i = 0; i < vertices; i++) 
-        vertex_set[i] = 0; 
-    for (int i = 0; i < vertices - 2; i++) 
-        vertex_set[prufer[i] - 1] += 1; 
-    int j = 0; 
-    for (int i = 0; i < vertices - 2; i++) { 
-        for (j = 0; j < vertices; j++) { 
-            if (vertex_set[j] == 0) { 
-                vertex_set[j] = -1; 
-                cout << (j + 1) << " "
-                     << prufer[i] << '\n'; 
-                vertex_set[prufer[i] - 1]--; 
-                break; 
-            } 
-        } 
-    } 
-    j = 0; 
-    for (int i = 0; i < vertices; i++) { 
-        if (vertex_set[i] == 0 && j == 0) { 
-            cout << (i + 1) << " "; 
-            j++; 
-        } 
-        else if (vertex_set[i] == 0 && j == 1) 
-            cout << (i + 1) << "\n"; 
-    }
-}
-signed main()
-{
 
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    ll t;
+    ll mod=998244353;
+    cin >> t;
+    while(t--){
+        ll n,k;
+        cin >> n >> k;
+        vector<ll> a(n);
+        for(int i=0;i<n;i++){
+            cin >> a[i];
+        }
+        ll c1=0;
+        ll s=0;
+        while(s<n-1){
+            if(a[s]<=k){
+                c1++;
+            }
+            ll b=(s+2)/2;
+            //cout << b << endl;
+            if(c1>=b && a[s+1]>k){
+                s++;
+            }
+            if(c1>=b){
+                break;
+            }
+            s++;
+        }
+        ll e=n-1;
+        ll c2=0;
+        while(e>0){
+            if(a[e]<=k){
+                c2++;
+            }
+            ll b=(n-e+1)/2;
+            if(c2>=b && a[e-1]>k){
+                e--;
+            }
+            if(c2>=b){
+                break;
+            }
+            e--;
+        }
+        ll x=s;
+        ll y=e;
+        bool flag=false;
+        // cout << s << " " << e << endl;
+        if(s+1==e || s==e){
+            s=0;
+            e=n-1;
+            c1=0;
+            c2=0;
+            while(s<n-1){
+                if(a[s]<=k){
+                    c1++;
+                }
+                ll b=(s+2)/2;
+                if(c1>=b){
+                    break;
+                }
+                s++;
+            }
+            while(e>0){
+                if(a[e]<=k){
+                    c2++;
+                }
+                ll b=(n-e+1)/2;
+                if(c2>=b){
+                    break;
+                }
+                e--;
+            }
+            if(s+1<e){
+                flag=true;
+            }
+        }
+        if(s+1<e){
+            flag=true;
+        }
+        ll cnt1=0;
+        for(int i=x+1;i<n-1;i++){
+            ll b=(i-x+1)/2;
+            if(a[i]<=k){
+                cnt1++;
+            }
+            if(cnt1>=b){
+                flag=true;
+                break;
+            }
+        }
+        ll cnt2=0;
+        for(int i=y-1;i>0;i--){
+            ll b=(y-i+1)/2;
+            if(a[i]<=k){
+                cnt2++;
+            }
+            if(cnt2>=b){
+                flag=true;
+                break;
+            }
+        }
+        if(flag){
+            cout << "YES" << endl;
+        }
+        else{
+            cout << "NO" << endl;
+        }
+    }
 }
